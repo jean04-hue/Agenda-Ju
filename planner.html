@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Planner Semanal</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* toast simples */
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      display: none;
+      z-index: 9999;
+      font-size: 14px;
+    }
+    .topbar {
+      width: 95%;
+      max-width: 1000px;
+      margin-top: 18px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+    }
+    .topbar .left { display:flex; gap:8px; align-items:center;}
+    .topbar button { padding:8px 12px; border-radius:8px; border:none; cursor:pointer; background:#0078ff; color:#fff;}
+    .username { font-weight:600; color:#004aad; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="left">
+      <button onclick="location.href='banco.html'">Banco Interno</button>
+      <button id="btnAdicionar">Adicionar Procedimento</button>
+      <button id="btnSalvar">Salvar Planner</button>
+      <button id="btnLimpar">Limpar Planner</button>
+    </div>
+    <div class="right">
+      <span class="username" id="userLabel"></span>
+      <button id="btnLogout" style="background:#ff6b6b">Sair</button>
+    </div>
+  </div>
+
+  <h1 style="margin-top:12px">Planner Semanal</h1>
+
+  <div class="container" style="margin-bottom:60px;">
+    <table id="planner">
+      <thead>
+        <tr>
+          <th>HORA</th>
+          <th>DOMINGO</th>
+          <th>SEGUNDA-FEIRA</th>
+          <th>TERÇA-FEIRA</th>
+          <th>QUARTA-FEIRA</th>
+          <th>QUINTA-FEIRA</th>
+          <th>SEXTA-FEIRA</th>
+          <th>SÁBADO</th>
+        </tr>
+      </thead>
+      <tbody id="plannerBody"></tbody>
+    </table>
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="script.js"></script>
+  <script>
+    // Proteção de página: redireciona para login se não autenticado
+    if (localStorage.getItem('loggedIn') !== 'true') {
+      window.location.href = 'index.html';
+    }
+
+    // mostra nome do usuário
+    const userLabel = document.getElementById('userLabel');
+    userLabel.textContent = localStorage.getItem('loggedUser') || '';
+
+    // logout
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      if (!confirm('Deseja sair?')) return;
+      localStorage.removeItem('loggedIn');
+      localStorage.removeItem('loggedUser');
+      window.location.href = 'index.html';
+    });
+
+    // botões já conectados no script.js; se necessário, re-expor:
+    document.getElementById('btnAdicionar').addEventListener('click', inserirProcedimento);
+    document.getElementById('btnSalvar').addEventListener('click', () => salvarPlanner(true));
+    document.getElementById('btnLimpar').addEventListener('click', () => {
+      if (!confirm('Tem certeza que quer limpar todo o planner?')) return;
+      // limpa células e localStorage
+      document.querySelectorAll('#plannerBody td[contenteditable]').forEach(td => {
+        td.textContent = '';
+        td.classList.remove('reservado');
+      });
+      localStorage.removeItem('plannerDados');
+      showToast('Planner limpo ✔');
+    });
+  </script>
+</body>
+</html>

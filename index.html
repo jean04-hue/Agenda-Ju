@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login - Planner</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* estilo leve específico pra login */
+    .login-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg,#00c6ff,#0072ff);
+      padding: 20px;
+    }
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      padding: 22px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin: 0 0 12px 0;
+      color: #004aad;
+      text-align: center;
+    }
+    .field {
+      margin-top: 10px;
+    }
+    .field input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #d0d7de;
+      font-size: 15px;
+    }
+    .actions {
+      margin-top: 16px;
+      display:flex;
+      gap:8px;
+      justify-content: center;
+    }
+    button.primary {
+      background:#0078ff;
+      color:white;
+      border:none;
+      padding:10px 16px;
+      border-radius:8px;
+      cursor:pointer;
+    }
+    .hint {
+      margin-top:12px;
+      font-size:13px;
+      color:#555;
+      text-align:center;
+    }
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      display: none;
+      z-index: 9999;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="card" role="main" aria-labelledby="loginTitle">
+      <h2 id="loginTitle">Acesse o Planner</h2>
+
+      <form id="loginForm">
+        <div class="field">
+          <label for="username">Usuário</label>
+          <!-- pré-preenchido conforme pedido -->
+          <input id="username" type="text" placeholder="Nome de usuário" value="Ajullya" required />
+        </div>
+
+        <div class="field">
+          <label for="password">Senha</label>
+          <input id="password" type="password" placeholder="Senha" value="IloveJu" required />
+        </div>
+
+        <div class="actions">
+          <button class="primary" type="submit">Entrar</button>
+        </div>
+
+        <p class="hint">Usuário único: <strong>Ajullya</strong> • Senha: <strong>IloveJu</strong></p>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    // credenciais fixas (apenas front-end)
+    const CRED_USER = 'Ajullya';
+    const CRED_PASS = 'IloveJu';
+
+    const form = document.getElementById('loginForm');
+    const toast = document.getElementById('toast');
+
+    function showToast(msg, ms = 2200) {
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(()=> toast.style.display = 'none', ms);
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value;
+
+      if (u === CRED_USER && p === CRED_PASS) {
+        localStorage.setItem('loggedIn', 'true');
+        localStorage.setItem('loggedUser', u);
+        showToast('Login realizado ✓');
+        setTimeout(() => {
+          window.location.href = 'planner.html';
+        }, 700);
+      } else {
+        alert('Usuário ou senha incorretos.');
+      }
+    });
+
+    // se já logado, redireciona
+    if (localStorage.getItem('loggedIn') === 'true') {
+      window.location.href = 'planner.html';
+    }
+  </script>
+</body>
+</html>

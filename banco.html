@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Banco Interno</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .wrap {
+      width:95%;
+      max-width:720px;
+      margin:18px auto;
+    }
+    form.card {
+      background:#fff;
+      padding:14px;
+      border-radius:10px;
+      box-shadow:0 8px 30px rgba(0,0,0,0.06);
+      display:flex;
+      gap:8px;
+      flex-direction:column;
+    }
+    .row { display:flex; gap:8px; flex-wrap:wrap; }
+    .row .col { flex:1; min-width:150px; }
+    table { margin-top:12px; width:100%; border-collapse:collapse; background:#fff; border-radius:8px; overflow:hidden; }
+    th,td { border:1px solid #e6eef8; padding:8px; text-align:center;}
+    th { background:#0078ff; color:#fff; }
+    .actions button { padding:6px 8px; border-radius:6px; border:none; cursor:pointer;}
+    .btn-back { background:#6c757d; color:#fff; }
+    .btn-logout { background:#ff6b6b; color:#fff; }
+  </style>
+</head>
+<body>
+  <div style="display:flex; justify-content:space-between; align-items:center; width:95%; max-width:1000px; margin:14px auto;">
+    <div>
+      <button onclick="location.href='planner.html'">← Voltar ao Planner</button>
+    </div>
+    <div>
+      <button class="btn-logout" id="btnLogout2">Sair</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <h2>Banco Interno</h2>
+
+    <form id="formBanco" class="card" autocomplete="off">
+      <div class="row">
+        <div class="col">
+          <label>Nome do Cliente</label>
+          <input id="nome" type="text" placeholder="Ex: Maria" required />
+        </div>
+        <div class="col">
+          <label>Procedimento</label>
+          <input id="procedimento" type="text" placeholder="Ex: Alongamento em Gel" required />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <label>Duração (horas)</label>
+          <input id="duracao" type="number" min="1" max="12" value="1" required />
+        </div>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:6px;">
+        <button type="submit">Salvar</button>
+        <button type="button" onclick="limparFormulario()">Limpar</button>
+      </div>
+    </form>
+
+    <table id="tabelaBanco">
+      <thead>
+        <tr><th>Nome</th><th>Procedimento</th><th>Duração (h)</th><th>Ações</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    // Proteção de página: redireciona para login se não autenticado
+    if (localStorage.getItem('loggedIn') !== 'true') {
+      window.location.href = 'index.html';
+    }
+
+    // logout
+    document.getElementById('btnLogout2').addEventListener('click', () => {
+      if (!confirm('Deseja sair?')) return;
+      localStorage.removeItem('loggedIn');
+      localStorage.removeItem('loggedUser');
+      window.location.href = 'index.html';
+    });
+
+    // banco logic (mesma ideia do arquivo anterior, organizada)
+    const formBanco = document.getElementById('formBanco');
+    const tabelaBody = document.querySelector('#tabelaBanco tbody');
+    const toast = document.getElementById('toast');
+
+    function showToast(msg, ms = 2200) {
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(()=> toast.style.display = 'none', ms);
+    }
+
+    function carregarBanco() {
+      const banco = JSON.parse(localStorage.getItem('bancoProcedimentos')) || [];
+      tabelaBody.innerHTML = '';
+      banco.forEach((it, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${it.nome}</td>
+          <td>${it.procedimento}</td>
+          <td>${it.duracao}</td>
+          <td class="actions">
+            <button onclick="editar(${idx})">✏️</button>
+            <button onclick="excluir(${idx})">🗑️</button>
+          </td>
+        `;
+        tabelaBody.appendChild(tr);
+      });
+    }
+
+    function limparFormulario() {
+      formBanco.reset();
+      document.getElementById('duracao').value = 1;
+    }
+
+    formBanco.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nome = document.getElementById('nome').value.trim();
+      const procedimento = document.getElementById('procedimento').value.trim();
+      const duracao = parseInt(document.getElementById('duracao').value, 10) || 1;
+
+      if (!nome || !procedimento) {
+        alert('Preencha todos os campos!');
+        return;
+      }
+
+      const banco = JSON.parse(localStorage.getItem('bancoProcedimentos')) || [];
+      banco.push({ nome, procedimento, duracao });
+      localStorage.setItem('bancoProcedimentos', JSON.stringify(banco));
+      showToast('Procedimento salvo ✔');
+      alert('Procedimento salvo com sucesso!');
+      limparFormulario();
+      carregarBanco();
+    });
+
+    function editar(idx) {
+      const banco = JSON.parse(localStorage.getItem('bancoProcedimentos')) || [];
+      if (!banco[idx]) return;
+      const it = banco[idx];
+      document.getElementById('nome').value = it.nome;
+      document.getElementById('procedimento').value = it.procedimento;
+      document.getElementById('duracao').value = it.duracao;
+      // remover item para que ao salvar seja substituído
+      banco.splice(idx, 1);
+      localStorage.setItem('bancoProcedimentos', JSON.stringify(banco));
+      carregarBanco();
+    }
+
+    function excluir(idx) {
+      const banco = JSON.parse(localStorage.getItem('bancoProcedimentos')) || [];
+      if (!banco[idx]) return;
+      if (!confirm(`Excluir ${banco[idx].procedimento} de ${banco[idx].nome}?`)) return;
+      banco.splice(idx,1);
+      localStorage.setItem('bancoProcedimentos', JSON.stringify(banco));
+      carregarBanco();
+      showToast('Procedimento excluído');
+    }
+
+    // inicial
+    carregarBanco();
+  </script>
+</body>
+</html>

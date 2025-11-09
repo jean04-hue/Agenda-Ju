@@ -1,0 +1,66 @@
+/* style.css - base para o projeto */
+* { box-sizing: border-box; }
+body {
+  font-family: 'Poppins', Arial, sans-serif;
+  background: #eef3f9;
+  margin: 0;
+  padding: 0;
+  color: #222;
+}
+
+/* títulos */
+h1, h2 { color: #003a8c; margin: 8px 0; }
+
+/* layout container */
+.container {
+  width: 95%;
+  max-width: 1000px;
+  margin: 8px auto;
+  overflow-x: auto;
+}
+
+/* tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+}
+th, td {
+  padding: 10px;
+  border: 1px solid #cfd8dc;
+  text-align: center;
+}
+th {
+  background: #0078ff;
+  color: #fff;
+  font-weight: 600;
+}
+td {
+  background: #dff0ff;
+  min-width: 100px;
+}
+
+/* célula editável */
+td[contenteditable] {
+  cursor: text;
+}
+td.reservado { background: #a7d9a1; font-weight:700; }
+
+/* botões globais */
+button {
+  background: #0078ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+}
+button:hover { filter:brightness(0.95); }
+
+/* responsivo */
+@media (max-width: 768px) {
+  th, td { padding: 8px; font-size: 13px; }
+  .container { padding: 8px; }
+}
