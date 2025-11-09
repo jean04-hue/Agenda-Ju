@@ -1,0 +1,39 @@
+/* ======== Telas de fundo para a página de login ======== */
+
+/* Fundo 1 – Borboletas em tons pastéis */
+.bg-login-borboletas {
+  background: url('https://rawpixel.com/image/9217127/dreamy-butterfly-pastel-background-aesthetic-sky.jpg') no-repeat center center/cover;
+}
+
+
+
+/* Fundo 2 – Flores delicadas e efeito suave */
+.bg-login-flores {
+  background: url('https://i.ibb.co/yy3Hz2v/flores-suaves.jpg') no-repeat center center/cover;
+}
+
+/* Fundo 3 – Estilo padrão minimalista (azul-claro abstrato) */
+.bg-login-padrao {
+  background: url('https://i.ibb.co/y4zQtGb/azul-abstrato.jpg') no-repeat center center/cover;
+}
+
+/* Fundo 4 – Tema escuro elegante */
+.bg-login-dark {
+  background: url('https://i.ibb.co/4tLjF5y/fundo-escuro-galaxia.jpg') no-repeat center center/cover;
+}
+
+/* Fundo 5 – Fundo neutro geométrico */
+.bg-login-neutro {
+  background: url('https://i.ibb.co/M9pzKzY/formas-neutras.jpg') no-repeat center center/cover;
+}
+
+/* Efeito geral para animação leve */
+.login-background {
+  transition: background-image 0.8s ease-in-out;
+  animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(1.02); }
+  to { opacity: 1; transform: scale(1); }
+}

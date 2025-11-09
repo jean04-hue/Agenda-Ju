@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Login - Planner</title>
+  <title>Login - Agenda</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="fundo.css" />
   <style>
     /* estilo leve específico pra login */
     .login-wrap {
@@ -74,9 +75,13 @@
   </style>
 </head>
 <body>
+
+  <body class="login-background bg-login-flores">
+
+
   <div class="login-wrap">
     <div class="card" role="main" aria-labelledby="loginTitle">
-      <h2 id="loginTitle">Acesse o Planner</h2>
+      <h2 id="loginTitle">Acesse a Agenda</h2>
 
       <form id="loginForm">
         <div class="field">
@@ -87,14 +92,14 @@
 
         <div class="field">
           <label for="password">Senha</label>
-          <input id="password" type="password" placeholder="Senha" value="IloveJu" required />
+          <input id="password" type="password" placeholder="Senha"  />
         </div>
 
         <div class="actions">
           <button class="primary" type="submit">Entrar</button>
         </div>
 
-        <p class="hint">Usuário único: <strong>Ajullya</strong> • Senha: <strong>IloveJu</strong></p>
+
       </form>
     </div>
   </div>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Planner Semanal</title>
+  <title>Agenda Semanal</title>
   <link rel="stylesheet" href="style.css" />
   <style>
     /* toast simples */
@@ -35,12 +35,15 @@
   </style>
 </head>
 <body>
+
+
+  
   <div class="topbar">
     <div class="left">
       <button onclick="location.href='banco.html'">Banco Interno</button>
       <button id="btnAdicionar">Adicionar Procedimento</button>
-      <button id="btnSalvar">Salvar Planner</button>
-      <button id="btnLimpar">Limpar Planner</button>
+      <button id="btnSalvar">Salvar Agenda</button>
+      <button id="btnLimpar">Limpar Agenda</button>
     </div>
     <div class="right">
       <span class="username" id="userLabel"></span>
@@ -48,7 +51,18 @@
     </div>
   </div>
 
-  <h1 style="margin-top:12px">Planner Semanal</h1>
+  <h1 style="margin-top:12px">Agenda Semanal</h1>
+
+  <div class="filtros">
+      <select id="filtroDia">
+        <option value="">Filtrar por dia</option>
+      </select>
+      <select id="filtroHora">
+        <option value="">Filtrar por hora</option>
+      </select>
+      <button id="btnFiltrar">🔍 Aplicar Filtro</button>
+      <button id="btnMostrarTudo">👁️ Mostrar Tudo</button>
+    </div>
 
   <div class="container" style="margin-bottom:60px;">
     <table id="planner">
@@ -93,14 +107,14 @@
     document.getElementById('btnAdicionar').addEventListener('click', inserirProcedimento);
     document.getElementById('btnSalvar').addEventListener('click', () => salvarPlanner(true));
     document.getElementById('btnLimpar').addEventListener('click', () => {
-      if (!confirm('Tem certeza que quer limpar todo o planner?')) return;
+      if (!confirm('Tem certeza que quer limpar toda a Agenda?')) return;
       // limpa células e localStorage
       document.querySelectorAll('#plannerBody td[contenteditable]').forEach(td => {
         td.textContent = '';
         td.classList.remove('reservado');
       });
       localStorage.removeItem('plannerDados');
-      showToast('Planner limpo ✔');
+      showToast('Agenda limpo ✔');
     });
   </script>
 </body>

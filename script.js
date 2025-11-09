@@ -2,6 +2,8 @@
 
 const plannerBody = document.getElementById('plannerBody');
 const toast = document.getElementById('toast'); // pode vir do planner.html
+const filtroDia = document.getElementById("filtroDia");
+const filtroHora = document.getElementById("filtroHora");
 const horas = Array.from({ length: 11 }, (_, i) => 9 + i); // 9..19
 const dias = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
 
@@ -105,8 +107,8 @@ function salvarPlanner(showAlert = true) {
   });
 
   localStorage.setItem('plannerDados', JSON.stringify(dados));
-  if (showAlert) alert('Planner salvo com sucesso!');
-  showToast('Planner salvo ✔');
+  if (showAlert) alert('Agenda salva com sucesso!');
+  showToast('Agenda salva ✔');
 }
 
 // carrega planner do localStorage
@@ -139,3 +141,75 @@ carregarPlanner();
 
 // Auto-save ao fechar a aba
 window.addEventListener('beforeunload', () => salvarPlanner(false));
+
+// ---------- Preenche opções de filtro ----------
+dias.forEach(dia => {
+  const opt = document.createElement("option");
+  opt.value = dia;
+  opt.textContent = dia;
+  filtroDia.appendChild(opt);
+});
+horas.forEach(h => {
+  const opt = document.createElement("option");
+  opt.value = h;
+  opt.textContent = h;
+  filtroHora.appendChild(opt);
+});
+
+// ---------- Filtro ----------
+document.getElementById("btnFiltrar").addEventListener("click", () => {
+  const diaSel = filtroDia.value;
+  const horaSel = filtroHora.value;
+
+  document.querySelectorAll("#plannerBody tr").forEach(row => {
+    const horaLinha = row.children[0].textContent.replace(":00", "").trim();
+    const exibirLinha = !horaSel || horaLinha === horaSel;
+    row.style.display = exibirLinha ? "" : "none";
+
+    // Agora filtramos as células pelos atributos data-dia
+    row.querySelectorAll("td[contenteditable='true']").forEach(td => {
+      const diaCelula = dias[parseInt(td.dataset.dia, 10)];
+      const exibirCelula = !diaSel || diaCelula === diaSel;
+      td.style.display = exibirCelula ? "" : "none";
+    });
+  });
+});
+
+
+document.getElementById("btnMostrarTudo").addEventListener("click", () => {
+  filtroDia.value = "";
+  filtroHora.value = "";
+  document.querySelectorAll("#plannerBody tr").forEach(row => {
+    row.style.display = "";
+    row.querySelectorAll("td").forEach(td => td.style.display = "");
+  });
+});
+
+
+// ---------- Controle de temas ----------
+const btnTema = document.getElementById("btnTema");
+const themeOptions = document.getElementById("themeOptions");
+
+btnTema.addEventListener("click", () => {
+  themeOptions.style.display =
+    themeOptions.style.display === "block" ? "none" : "block";
+});
+
+// Aplicar tema
+document.querySelectorAll(".theme-options button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const theme = btn.dataset.theme;
+    aplicarTema(theme);
+    localStorage.setItem("temaAtivo", theme);
+    themeOptions.style.display = "none";
+  });
+});
+
+function aplicarTema(theme) {
+  document.body.className = "";
+  document.body.classList.add("tema-" + theme);
+}
+
+// Restaurar tema salvo
+const temaSalvo = localStorage.getItem("temaAtivo");
+if (temaSalvo) aplicarTema(temaSalvo);

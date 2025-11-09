@@ -64,3 +64,14 @@ button:hover { filter:brightness(0.95); }
   th, td { padding: 8px; font-size: 13px; }
   .container { padding: 8px; }
 }
+
+
+/* Filtros */
+.filtros {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
