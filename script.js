@@ -4,8 +4,59 @@ const plannerBody = document.getElementById('plannerBody');
 const toast = document.getElementById('toast'); // pode vir do planner.html
 const filtroDia = document.getElementById("filtroDia");
 const filtroHora = document.getElementById("filtroHora");
-const horas = Array.from({ length: 11 }, (_, i) => 9 + i); // 9..19
+const horas = Array.from({ length: 12 }, (_, i) => 8 + i); // 8..19
 const dias = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+
+// ====== CALENDÁRIO SEMANAL ======
+let dataBase = new Date(); // hoje
+let inicioSemana = getInicioDaSemana(dataBase);
+atualizarCabecalhoDias();
+
+// Função para obter o domingo de uma semana
+function getInicioDaSemana(data) {
+  const d = new Date(data);
+  const dia = d.getDay(); // 0=domingo
+  d.setDate(d.getDate() - dia);
+  return d;
+}
+
+// Atualiza os cabeçalhos da tabela com as datas
+function atualizarCabecalhoDias() {
+  const ths = document.querySelectorAll("#planner thead th");
+  if (ths.length < 8) return;
+
+  let data = new Date(inicioSemana);
+  let fimSemana = new Date(inicioSemana);
+  fimSemana.setDate(inicioSemana.getDate() + 6);
+
+  // Atualiza o título da semana
+  const tituloSemana = document.getElementById("tituloSemana");
+  if (tituloSemana) {
+    const opcoes = { day: "2-digit", month: "2-digit" };
+    tituloSemana.textContent = `Semana de ${inicioSemana.toLocaleDateString("pt-BR", opcoes)} a ${fimSemana.toLocaleDateString("pt-BR", opcoes)}`;
+  }
+
+  // Atualiza os dias + datas
+  for (let i = 1; i < ths.length; i++) {
+    const nomeDia = dias[i - 1];
+    const diaNum = data.getDate().toString().padStart(2, "0");
+    const mesNum = (data.getMonth() + 1).toString().padStart(2, "0");
+    ths[i].textContent = `${nomeDia} (${diaNum}/${mesNum})`;
+    data.setDate(data.getDate() + 1);
+  }
+}
+
+// Botões de navegação
+document.getElementById("btnSemanaAnterior").addEventListener("click", () => {
+  inicioSemana.setDate(inicioSemana.getDate() - 7);
+  atualizarCabecalhoDias();
+});
+
+document.getElementById("btnSemanaProxima").addEventListener("click", () => {
+  inicioSemana.setDate(inicioSemana.getDate() + 7);
+  atualizarCabecalhoDias();
+});
+
 
 // cria grade editável
 function criarTabela() {

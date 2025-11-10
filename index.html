@@ -72,6 +72,15 @@
       z-index: 9999;
       font-size: 14px;
     }
+
+    .versao {
+  font-size: 13px;
+  color: #888;
+  text-align: center;
+  margin-top: 18px;
+  user-select: none;
+}
+
   </style>
 </head>
 <body>
@@ -99,6 +108,9 @@
           <button class="primary" type="submit">Entrar</button>
         </div>
 
+        <div class="Login-actions">
+          <p id="versaoApp" class="versao">Versão 1.0.0</p>
+        </div>
 
       </form>
     </div>
@@ -141,6 +153,11 @@
     if (localStorage.getItem('loggedIn') === 'true') {
       window.location.href = 'planner.html';
     }
+
+
+  const VERSAO_ATUAL = "1.1.0"; // 🔁 altere aqui a cada deploy
+  document.getElementById("versaoApp").textContent = `Versão ${VERSAO_ATUAL}`;
+
   </script>
 </body>
 </html>

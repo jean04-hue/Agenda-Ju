@@ -75,3 +75,61 @@ button:hover { filter:brightness(0.95); }
   margin-bottom: 15px;
 }
 
+/* ====== NAVEGAÇÃO SEMANAL ====== */
+.semana-navegacao {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#tituloSemana {
+  font-size: 18px;
+  color: #444;
+  font-weight: 600;
+}
+
+/* Botões laterais */
+.seta-esquerda, .seta-direita {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #6b8eff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.seta-esquerda:hover, .seta-direita:hover {
+  transform: translateY(-50%) scale(1.1);
+  filter: brightness(0.9);
+}
+
+.seta-esquerda { left: 10px; }
+.seta-direita { right: 10px; }
+
+/* Responsividade */
+@media (max-width: 600px) {
+  #tituloSemana {
+    font-size: 16px;
+    padding: 0 50px; /* evita sobreposição das setas */
+  }
+  .seta-esquerda, .seta-direita {
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+  }
+}
+
+td {
+  padding: 6px;
+  font-size: 14px;
+}
