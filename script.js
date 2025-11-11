@@ -1,26 +1,35 @@
 // script.js - lógica do planner (criação, salvar, carregar e integração com banco interno)
 
 const plannerBody = document.getElementById('plannerBody');
-const toast = document.getElementById('toast'); // pode vir do planner.html
+const toast = document.getElementById('toast');
 const filtroDia = document.getElementById("filtroDia");
 const filtroHora = document.getElementById("filtroHora");
-const horas = Array.from({ length: 12 }, (_, i) => 8 + i); // 8..19
+const horas = Array.from({ length: 12 }, (_, i) => 8 + i); // 8h..19h
 const dias = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
 
 // ====== CALENDÁRIO SEMANAL ======
-let dataBase = new Date(); // hoje
+let dataBase = new Date();
 let inicioSemana = getInicioDaSemana(dataBase);
 atualizarCabecalhoDias();
 
-// Função para obter o domingo de uma semana
+// Função para obter o domingo da semana
 function getInicioDaSemana(data) {
   const d = new Date(data);
-  const dia = d.getDay(); // 0=domingo
+  const dia = d.getDay(); // 0 = domingo
   d.setDate(d.getDate() - dia);
   return d;
 }
 
-// Atualiza os cabeçalhos da tabela com as datas
+// Gera uma chave única para cada semana (ex: "2025-11-03")
+function getSemanaKey(date = new Date()) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // volta até segunda
+  const segunda = new Date(d.setDate(diff));
+  return segunda.toISOString().split('T')[0];
+}
+
+// Atualiza cabeçalhos e datas
 function atualizarCabecalhoDias() {
   const ths = document.querySelectorAll("#planner thead th");
   if (ths.length < 8) return;
@@ -29,14 +38,16 @@ function atualizarCabecalhoDias() {
   let fimSemana = new Date(inicioSemana);
   fimSemana.setDate(inicioSemana.getDate() + 6);
 
-  // Atualiza o título da semana
+    // Atualiza o título da semana
+
   const tituloSemana = document.getElementById("tituloSemana");
   if (tituloSemana) {
     const opcoes = { day: "2-digit", month: "2-digit" };
     tituloSemana.textContent = `Semana de ${inicioSemana.toLocaleDateString("pt-BR", opcoes)} a ${fimSemana.toLocaleDateString("pt-BR", opcoes)}`;
   }
 
-  // Atualiza os dias + datas
+    // Atualiza o título da semana
+
   for (let i = 1; i < ths.length; i++) {
     const nomeDia = dias[i - 1];
     const diaNum = data.getDate().toString().padStart(2, "0");
@@ -44,6 +55,9 @@ function atualizarCabecalhoDias() {
     ths[i].textContent = `${nomeDia} (${diaNum}/${mesNum})`;
     data.setDate(data.getDate() + 1);
   }
+
+  // 👉 Atualiza a tabela ao trocar de semana
+  carregarPlanner();
 }
 
 // Botões de navegação
@@ -75,7 +89,7 @@ function criarTabela() {
       td.contentEditable = "true";
       td.dataset.hora = String(hora);
       td.dataset.dia = String(diaIndex);
-      td.addEventListener('blur', () => { /* deixar para salvar manualmente */ });
+      td.addEventListener('blur', () => {});
       tr.appendChild(td);
     }
 
@@ -92,7 +106,7 @@ function showToast(msg, ms = 2200) {
   setTimeout(()=> t.style.display = 'none', ms);
 }
 
-// inserir procedimento: pega lista do banco e permite escolher; então clique na célula inicial
+// inserir procedimento
 function inserirProcedimento() {
   const banco = JSON.parse(localStorage.getItem('bancoProcedimentos')) || [];
   if (banco.length === 0) {
@@ -108,17 +122,18 @@ function inserirProcedimento() {
   }
   const proc = banco[idx];
   alert(`Procedimento selecionado: ${proc.procedimento} de ${proc.nome} (${proc.duracao}h). Clique na célula inicial para inserir.`);
-  // ativa clique nas células
+  
   document.querySelectorAll('#plannerBody td[contenteditable="true"]').forEach(td => {
     td.onclick = () => {
       preencherCelulas(td, proc);
-      // remove onclicks para evitar inserções múltiplas
+
+            // remove onclicks para evitar inserções múltiplas
       document.querySelectorAll('#plannerBody td[contenteditable="true"]').forEach(t => t.onclick = null);
     };
   });
 }
 
-// preenche células sequenciais com duração
+// preencher células
 function preencherCelulas(startTd, proc) {
   const duracao = parseInt(proc.duracao, 10) || 1;
   const horaInicial = parseInt(startTd.dataset.hora, 10);
@@ -141,8 +156,9 @@ function preencherCelulas(startTd, proc) {
   salvarPlanner(false);
 }
 
-// salva planner no localStorage
+// salva planner da semana atual
 function salvarPlanner(showAlert = true) {
+  const semanaKey = getSemanaKey(inicioSemana);
   const trs = Array.from(plannerBody.querySelectorAll('tr'));
   const dados = [];
 
@@ -157,16 +173,20 @@ function salvarPlanner(showAlert = true) {
     }
   });
 
-  localStorage.setItem('plannerDados', JSON.stringify(dados));
+  let agendas = JSON.parse(localStorage.getItem('plannerSemanas')) || {};
+  agendas[semanaKey] = dados;
+  localStorage.setItem('plannerSemanas', JSON.stringify(agendas));
+
   if (showAlert) alert('Agenda salva com sucesso!');
   showToast('Agenda salva ✔');
 }
 
-// carrega planner do localStorage
+// carrega planner da semana atual
 function carregarPlanner() {
-  const dados = JSON.parse(localStorage.getItem('plannerDados')) || [];
-  if (!Array.isArray(dados)) return;
-  // limpa
+  const semanaKey = getSemanaKey(inicioSemana);
+  const agendas = JSON.parse(localStorage.getItem('plannerSemanas')) || {};
+  const dados = agendas[semanaKey] || [];
+
   document.querySelectorAll('#plannerBody td[contenteditable="true"]').forEach(td => {
     td.textContent = '';
     td.classList.remove('reservado');
@@ -193,7 +213,7 @@ carregarPlanner();
 // Auto-save ao fechar a aba
 window.addEventListener('beforeunload', () => salvarPlanner(false));
 
-// ---------- Preenche opções de filtro ----------
+// filtros
 dias.forEach(dia => {
   const opt = document.createElement("option");
   opt.value = dia;
@@ -217,14 +237,13 @@ document.getElementById("btnFiltrar").addEventListener("click", () => {
     const exibirLinha = !horaSel || horaLinha === horaSel;
     row.style.display = exibirLinha ? "" : "none";
 
-    // Agora filtramos as células pelos atributos data-dia
     row.querySelectorAll("td[contenteditable='true']").forEach(td => {
       const diaCelula = dias[parseInt(td.dataset.dia, 10)];
       const exibirCelula = !diaSel || diaCelula === diaSel;
       td.style.display = exibirCelula ? "" : "none";
     });
   });
-});
+}); 
 
 
 document.getElementById("btnMostrarTudo").addEventListener("click", () => {
