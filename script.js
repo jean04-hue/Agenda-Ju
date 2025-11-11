@@ -38,15 +38,11 @@ function atualizarCabecalhoDias() {
   let fimSemana = new Date(inicioSemana);
   fimSemana.setDate(inicioSemana.getDate() + 6);
 
-    // Atualiza o título da semana
-
   const tituloSemana = document.getElementById("tituloSemana");
   if (tituloSemana) {
     const opcoes = { day: "2-digit", month: "2-digit" };
     tituloSemana.textContent = `Semana de ${inicioSemana.toLocaleDateString("pt-BR", opcoes)} a ${fimSemana.toLocaleDateString("pt-BR", opcoes)}`;
   }
-
-    // Atualiza o título da semana
 
   for (let i = 1; i < ths.length; i++) {
     const nomeDia = dias[i - 1];
@@ -71,7 +67,6 @@ document.getElementById("btnSemanaProxima").addEventListener("click", () => {
   atualizarCabecalhoDias();
 });
 
-
 // cria grade editável
 function criarTabela() {
   if (!plannerBody) return;
@@ -79,7 +74,6 @@ function criarTabela() {
 
   horas.forEach(hora => {
     const tr = document.createElement('tr');
-
     const tdHora = document.createElement('td');
     tdHora.textContent = `${hora}:00`;
     tr.appendChild(tdHora);
@@ -126,8 +120,6 @@ function inserirProcedimento() {
   document.querySelectorAll('#plannerBody td[contenteditable="true"]').forEach(td => {
     td.onclick = () => {
       preencherCelulas(td, proc);
-
-            // remove onclicks para evitar inserções múltiplas
       document.querySelectorAll('#plannerBody td[contenteditable="true"]').forEach(t => t.onclick = null);
     };
   });
@@ -210,7 +202,6 @@ function carregarPlanner() {
 criarTabela();
 carregarPlanner();
 
-// Auto-save ao fechar a aba
 window.addEventListener('beforeunload', () => salvarPlanner(false));
 
 // filtros
@@ -227,7 +218,6 @@ horas.forEach(h => {
   filtroHora.appendChild(opt);
 });
 
-// ---------- Filtro ----------
 document.getElementById("btnFiltrar").addEventListener("click", () => {
   const diaSel = filtroDia.value;
   const horaSel = filtroHora.value;
@@ -243,8 +233,7 @@ document.getElementById("btnFiltrar").addEventListener("click", () => {
       td.style.display = exibirCelula ? "" : "none";
     });
   });
-}); 
-
+});
 
 document.getElementById("btnMostrarTudo").addEventListener("click", () => {
   filtroDia.value = "";
@@ -255,7 +244,6 @@ document.getElementById("btnMostrarTudo").addEventListener("click", () => {
   });
 });
 
-
 // ---------- Controle de temas ----------
 const btnTema = document.getElementById("btnTema");
 const themeOptions = document.getElementById("themeOptions");
@@ -265,7 +253,6 @@ btnTema.addEventListener("click", () => {
     themeOptions.style.display === "block" ? "none" : "block";
 });
 
-// Aplicar tema
 document.querySelectorAll(".theme-options button").forEach(btn => {
   btn.addEventListener("click", () => {
     const theme = btn.dataset.theme;
@@ -280,6 +267,5 @@ function aplicarTema(theme) {
   document.body.classList.add("tema-" + theme);
 }
 
-// Restaurar tema salvo
 const temaSalvo = localStorage.getItem("temaAtivo");
 if (temaSalvo) aplicarTema(temaSalvo);
