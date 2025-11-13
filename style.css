@@ -9,7 +9,7 @@ body {
 }
 
 /* títulos */
-h1, h2 { color: #003a8c; margin: 8px 0; }
+h1, h2 { color: #003a8c; margin: 8px 0; text-align: center;  }
 
 /* layout container */
 .container {
@@ -132,4 +132,98 @@ button:hover { filter:brightness(0.95); }
 td {
   padding: 6px;
   font-size: 14px;
+}
+
+
+.input-procedimento {
+  width: 95%;
+  padding: 5px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 4px;
+  text-align: center;
+  background-color: transparent;
+}
+
+.input-procedimento:focus {
+  outline: none;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+
+.input-procedimento {
+  width: 100%;
+  padding: 4px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  background: transparent;
+  font-size: 0.9em;
+  text-align: center;
+}
+.input-procedimento:focus {
+  outline: none;
+  border-bottom: 1px solid #007bff;
+}
+.popup-procedimento {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+.popup-conteudo {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 300px;
+}
+.popup-acoes {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+.popup-acoes button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  background: #007bff;
+  color: #fff;
+}
+.popup-acoes button:hover {
+  opacity: 0.9;
+}
+
+.container {
+    display: flex; /* ou display: grid; */
+    flex-wrap: wrap; /* Permite que os itens se movam para novas linhas */
+}
+
+/* Estilos para telas pequenas */
+@media (max-width: 600px) {
+    .container {
+        flex-direction: column; /* Alinha itens em uma coluna em telas pequenas */
+    }
+}
+
+/* Estilos para telas médias */
+@media (min-width: 601px) and (max-width: 900px) {
+    .container {
+        flex-direction: row; /* Alinha itens em uma linha em telas médias */
+    }
+}
+
+/* Estilos para telas grandes */
+@media (min-width: 901px) {
+    .container {
+        flex-direction: row; /* Alinha itens em uma linha em telas grandes */
+    }
+}
+
+.container {
+    width: 100%; /* Utiliza 100% da largura disponível */
+    padding: 1em; /* Padding que se ajusta com base no tamanho da fonte */
 }

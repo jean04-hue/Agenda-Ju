@@ -67,29 +67,149 @@ document.getElementById("btnSemanaProxima").addEventListener("click", () => {
   atualizarCabecalhoDias();
 });
 
-// cria grade editável
+// cria grade editável com inputs e popup
 function criarTabela() {
   if (!plannerBody) return;
   plannerBody.innerHTML = '';
 
   horas.forEach(hora => {
     const tr = document.createElement('tr');
+
+    // Coluna da hora
     const tdHora = document.createElement('td');
     tdHora.textContent = `${hora}:00`;
     tr.appendChild(tdHora);
 
+    // Cria 7 colunas (dias)
     for (let diaIndex = 0; diaIndex < 7; diaIndex++) {
       const td = document.createElement('td');
-      td.contentEditable = "true";
       td.dataset.hora = String(hora);
       td.dataset.dia = String(diaIndex);
-      td.addEventListener('blur', () => {});
+
+      // input
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'Adicionar...';
+      input.classList.add('input-procedimento');
+      input.readOnly = true;
+
+      // evento de clique
+      input.addEventListener('click', () => abrirPopupProcedimento(hora, diaIndex));
+
+      td.appendChild(input);
       tr.appendChild(td);
     }
 
     plannerBody.appendChild(tr);
   });
 }
+
+// abre popup de seleção de procedimento
+function abrirPopupProcedimento(hora, diaIndex) {
+  const bancoProcedimentos = JSON.parse(localStorage.getItem('bancoProcedimentos')) || [];
+
+  const popup = document.createElement('div');
+  popup.classList.add('popup-procedimento');
+
+  // se não há procedimentos
+  if (bancoProcedimentos.length === 0) {
+    popup.innerHTML = `
+      <div class="popup-conteudo">
+        <h3>Nenhum procedimento encontrado</h3>
+        <p>Cadastre um procedimento antes de adicionar.</p>
+        <button id="btnFecharPopup">Fechar</button>
+      </div>
+    `;
+    document.body.appendChild(popup);
+    popup.querySelector('#btnFecharPopup').onclick = () => popup.remove();
+    return;
+  }
+
+  popup.innerHTML = `
+    <div class="popup-conteudo">
+      <h3>Escolher procedimento</h3>
+      <select id="selectProcedimento" style="width:100%;padding:8px;margin-top:8px;">
+        <option value="">Selecione...</option>
+        ${bancoProcedimentos.map((p, i) => `<option value="${i}">${p.procedimento} (${p.nome})</option>`).join('')}
+      </select>
+      <div class="popup-acoes">
+        <button id="btnConfirmarPopup">Avançar</button>
+        <button id="btnCancelarPopup">Cancelar</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+
+  popup.querySelector('#btnCancelarPopup').onclick = () => popup.remove();
+  popup.querySelector('#btnConfirmarPopup').onclick = () => {
+    const idx = popup.querySelector('#selectProcedimento').value;
+    if (idx === '') {
+      alert('Selecione um procedimento!');
+      return;
+    }
+    const procedimentoSelecionado = bancoProcedimentos[idx];
+    popup.remove();
+    abrirPopupCliente(hora, diaIndex, procedimentoSelecionado);
+  };
+}
+
+// abre popup de seleção de cliente
+function abrirPopupCliente(hora, diaIndex, procedimentoSelecionado) {
+  const bancoClientes = JSON.parse(localStorage.getItem('bancoClientes')) || [];
+
+  const popup = document.createElement('div');
+  popup.classList.add('popup-procedimento');
+
+  // se não há clientes
+  if (bancoClientes.length === 0) {
+    popup.innerHTML = `
+      <div class="popup-conteudo">
+        <h3>Nenhum cliente encontrado</h3>
+        <p>Cadastre um cliente antes de adicionar.</p>
+        <button id="btnFecharPopup">Fechar</button>
+      </div>
+    `;
+    document.body.appendChild(popup);
+    popup.querySelector('#btnFecharPopup').onclick = () => popup.remove();
+    return;
+  }
+
+  popup.innerHTML = `
+    <div class="popup-conteudo">
+      <h3>Escolher cliente</h3>
+      <select id="selectCliente" style="width:100%;padding:8px;margin-top:8px;">
+        <option value="">Selecione...</option>
+        ${bancoClientes.map((c, i) => `<option value="${i}">${c.nome}</option>`).join('')}
+      </select>
+      <div class="popup-acoes">
+        <button id="btnConfirmarCliente">Adicionar</button>
+        <button id="btnCancelarCliente">Cancelar</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+
+  popup.querySelector('#btnCancelarCliente').onclick = () => popup.remove();
+  popup.querySelector('#btnConfirmarCliente').onclick = () => {
+    const idx = popup.querySelector('#selectCliente').value;
+    if (idx === '') {
+      alert('Selecione uma cliente!');
+      return;
+    }
+    const cliente = bancoClientes[idx];
+    popup.remove();
+
+    // insere na célula
+    const td = plannerBody.querySelector(`td[data-hora="${hora}"][data-dia="${diaIndex}"]`);
+    if (td) {
+      const input = td.querySelector('input');
+      input.value = `${cliente.nome} - ${procedimentoSelecionado.procedimento}`;
+    }
+  };
+}
+
 
 // toast util
 function showToast(msg, ms = 2200) {

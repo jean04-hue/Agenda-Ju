@@ -2,127 +2,317 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Agenda Semanal</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    /* toast simples */
+    /* ====== RESET & BASE ====== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #74ABE2, #5563DE);
+      overflow: hidden;
+    }
+
+    /* ====== CONTAINER MOBILE ====== */
+    .app-container {
+      width: 100%;
+      max-width: 420px;
+      height: 90vh;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      padding: 20px;
+    }
+
+    /* ====== TOPO / HEADER ====== */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #5563DE;
+      color: #fff;
+      padding: 14px 20px;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+    }
+
+    header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      text-align: center;
+      flex: 1;
+    }
+
+    header button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* ====== MENU LATERAL ====== */
+    .menu-lateral {
+      position: absolute;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background: #2C2F33;
+      color: #fff;
+      transition: 0.3s;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 1000;
+    }
+
+    .menu-lateral.active {
+      left: 0;
+    }
+
+    .menu-lateral button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .menu-lateral button:hover {
+      color: #74ABE2;
+    }
+
+    /* ====== BOTÕES SUPERIORES ====== */
+    .top-actions {
+      display: flex;
+      justify-content: space-around;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+
+    .top-actions button {
+      flex: 1 1 45%;
+      background: #5563DE;
+      border: none;
+      color: white;
+      padding: 10px;
+      margin: 4px;
+      border-radius: 10px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .top-actions button:hover {
+      background: #3a45a2;
+    }
+
+    /* ====== NAVEGAÇÃO SEMANA ====== */
+    .semana-navegacao {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .semana-navegacao button {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: #5563DE;
+      cursor: pointer;
+    }
+
+    #tituloSemana {
+      font-weight: 600;
+      font-size: 16px;
+      color: #333;
+    }
+
+    /* ====== TABELA ====== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+
+    th {
+      background: #f4f4f8;
+      padding: 8px;
+      font-weight: 600;
+      border-radius: 8px;
+    }
+
+    td {
+      border: 1px solid #ddd;
+      text-align: center;
+      padding: 6px;
+      min-height: 32px;
+      border-radius: 6px;
+      transition: 0.2s;
+    }
+
+    td[contenteditable="true"]:focus {
+      outline: none;
+      background: #eef2ff;
+    }
+
+    /* ====== BOTÃO FLUTUANTE ====== */
+    .btn-float {
+      position: absolute;
+      bottom: 25px;
+      right: 25px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #5563DE;
+      color: #fff;
+      font-size: 28px;
+      border: none;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn-float:hover {
+      background: #3a45a2;
+    }
+
+    /* ====== TOAST ====== */
     #toast {
       position: fixed;
-      bottom: 20px;
+      bottom: 25px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0,0,0,0.8);
+      background: #222;
       color: #fff;
       padding: 10px 16px;
-      border-radius: 8px;
+      border-radius: 10px;
       display: none;
-      z-index: 9999;
       font-size: 14px;
+      z-index: 999;
+      animation: fadein 0.3s;
     }
-    .topbar {
-      width: 95%;
-      max-width: 1000px;
-      margin-top: 18px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
+
+    @keyframes fadein {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
-    .topbar .left { display:flex; gap:8px; align-items:center;}
-    .topbar button { padding:8px 12px; border-radius:8px; border:none; cursor:pointer; background:#0078ff; color:#fff;}
-    .username { font-weight:600; color:#004aad; }
+
+    /* ====== RESPONSIVIDADE ====== */
+    @media (min-width: 768px) {
+      .app-container {
+        max-width: 700px;
+      }
+    }
   </style>
 </head>
 <body>
+  <div class="app-container">
 
+    <!-- MENU LATERAL -->
+    <div class="menu-lateral" id="menuLateral">
+      <button onclick="toggleMenu()"><i class="fas fa-times"></i> Fechar</button>
+      <button onclick="location.href='banco.html'"><i class="fas fa-database"></i> Banco Interno</button>
+      <button><i class="fas fa-user"></i> Clientes</button>
+      <button><i class="fas fa-calendar-plus"></i> Adicionar Procedimento</button>
+      <button><i class="fas fa-gear"></i> Configurações</button>
+      <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
+    </div>
 
-  
-  <div class="topbar">
-    <div class="left">
-      <button onclick="location.href='banco.html'">Banco Interno</button>
-      <button id="btnAdicionar">Adicionar Procedimento</button>
-      <button id="btnSalvar">Salvar Agenda</button>
-      <button id="btnLimpar">Limpar Agenda</button>
+    <!-- CABEÇALHO -->
+    <header>
+      <button onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+      <h1>Agenda Semanal</h1>
+      <span id="userLabel"></span>
+    </header>
+
+    <!-- ÁREA DE CONTEÚDO -->
+    <div class="scroll-area">
+      <div class="top-actions">
+        <button id="btnSalvar">💾 Salvar</button>
+        <button id="btnLimpar">🧹 Limpar</button>
+      </div>
+
+      <div class="semana-navegacao">
+        <button id="btnSemanaAnterior">←</button>
+        <h2 id="tituloSemana">Semana Atual</h2>
+        <button id="btnSemanaProxima">→</button>
+      </div>
+
+      <table id="planner">
+        <thead>
+          <tr>
+            <th>HORA</th>
+            <th>DOM</th>
+            <th>SEG</th>
+            <th>TER</th>
+            <th>QUA</th>
+            <th>QUI</th>
+            <th>SEX</th>
+            <th>SÁB</th>
+          </tr>
+        </thead>
+        <tbody id="plannerBody"></tbody>
+      </table>
     </div>
-    <div class="right">
-      <span class="username" id="userLabel"></span>
-      <button id="btnLogout" style="background:#ff6b6b">Sair</button>
-    </div>
+
+    <!-- BOTÃO FLUTUANTE -->
+    <button class="btn-float" id="btnAdicionar"><i class="fas fa-plus"></i></button>
+
+    <!-- TOAST -->
+    <div id="toast"></div>
   </div>
-
-  <h1 style="margin-top:12px">Agenda Semanal</h1>
-
-  <div class="filtros">
-      <select id="filtroDia">
-        <option value="">Filtrar por dia</option>
-      </select>
-      <select id="filtroHora">
-        <option value="">Filtrar por hora</option>
-      </select>
-      <button id="btnFiltrar">🔍 Aplicar Filtro</button>
-      <button id="btnMostrarTudo">👁️ Mostrar Tudo</button>
-    </div>
-
-<div class="semana-navegacao">
-  <button id="btnSemanaAnterior" class="seta-esquerda">←</button>
-  <h2 id="tituloSemana">Semana atual</h2>
-  <button id="btnSemanaProxima" class="seta-direita">→</button>
-</div>
-
-
-  <div class="container" style="margin-bottom:60px;">
-    <table id="planner">
-      <thead>
-        <tr>
-          <th>HORA</th>
-          <th>DOMINGO</th>
-          <th>SEGUNDA-FEIRA</th>
-          <th>TERÇA-FEIRA</th>
-          <th>QUARTA-FEIRA</th>
-          <th>QUINTA-FEIRA</th>
-          <th>SEXTA-FEIRA</th>
-          <th>SÁBADO</th>
-        </tr>
-      </thead>
-      <tbody id="plannerBody"></tbody>
-    </table>
-  </div>
-
-  <div id="toast"></div>
 
   <script src="script.js"></script>
   <script>
-    // Proteção de página: redireciona para login se não autenticado
-    if (localStorage.getItem('loggedIn') !== 'true') {
-      window.location.href = 'index.html';
+    const menu = document.getElementById('menuLateral');
+    const userLabel = document.getElementById('userLabel');
+
+    function toggleMenu() {
+      menu.classList.toggle('active');
     }
 
-    // mostra nome do usuário
-    const userLabel = document.getElementById('userLabel');
-    userLabel.textContent = localStorage.getItem('loggedUser') || '';
-
-    // logout
-    document.getElementById('btnLogout').addEventListener('click', () => {
+    function logout() {
       if (!confirm('Deseja sair?')) return;
       localStorage.removeItem('loggedIn');
       localStorage.removeItem('loggedUser');
       window.location.href = 'index.html';
-    });
+    }
 
-    // botões já conectados no script.js; se necessário, re-expor:
-    document.getElementById('btnAdicionar').addEventListener('click', inserirProcedimento);
-    document.getElementById('btnSalvar').addEventListener('click', () => salvarPlanner(true));
-    document.getElementById('btnLimpar').addEventListener('click', () => {
-      if (!confirm('Tem certeza que quer limpar toda a Agenda?')) return;
-      // limpa células e localStorage
-      document.querySelectorAll('#plannerBody td[contenteditable]').forEach(td => {
-        td.textContent = '';
-        td.classList.remove('reservado');
-      });
-      localStorage.removeItem('plannerDados');
-      showToast('Agenda limpo ✔');
-    });
+    if (localStorage.getItem('loggedIn') !== 'true') {
+      window.location.href = 'index.html';
+    }
+
+    userLabel.textContent = localStorage.getItem('loggedUser') || '';
   </script>
 </body>
 </html>
